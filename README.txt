@@ -162,24 +162,35 @@ RBseq_Map_Insertions.py Outputs
 
   POOL_poolfile
     Tab-delimited file describing the pool of insertion mutants for which unique barcodes mapped to a single unambiguous genomic location.  This file is used for downstream analysis. Other outputs are provided for troubleshooting analysis and library construction.
-  POOL_poolfile_ambiguous
+
+  POOL_poolfile_ambiguous
     Barcodes ambiguously mapping to two or more locations.  These are barcodes inserted into sequence with one or more very similar sequences in the genome, or with poor quality reads for mapping the junction to the genome, creating uncertainty as to where exactly the barcode is inserted.
-  POOL_poolfile_filteredLocal
+
+  POOL_poolfile_filteredLocal
     Barcodes that were mapped close to a very similar, more abundant barcode
-  POOL_poolfile_insertReadsOnly
+
+  POOL_poolfile_insertReadsOnly
     Barcodes that only mapped to insert sequences.  These could be barcodes in concatameric insertions for which the junction with the genome is difficult to amplify or in multi-barcode concatamers
-  POOL_poolfile_multiLocus
+
+  POOL_poolfile_multiLocus
     Barcodes with reads mapping to two or more distinct locations.  Most likely the same sequence barcode inserted in two or more different genomic locations
-  POOL_poolfile_offByOne    Barcodes that differed by just one base from much more abundant barcodes.  Almost certainly sequencing errors.  
+
+  POOL_poolfile_offByOne
+    Barcodes that differed by just one base from much more abundant barcodes.  Almost certainly sequencing errors.
+  
   TNSEQ_FILE_blastGenome.txt
     Results from the BLAST search of sequences from TNSEQ_FILE against the genome.
-  TNSEQ_FILE_blastInsert.txt
+
+  TNSEQ_FILE_blastInsert.txt
     Results from the BLAST search of sequences from TNSEQ_FILE against the genome.
-  TNSEQ_FILE_blastquery.fasta
+
+  TNSEQ_FILE_blastquery.fasta
     Sequences blasted agains the genome/insert from TNSEQ_FILE
-  TNSEQ_FILE_mapped.txt
+
+  TNSEQ_FILE_mapped.txt
     Summary of each read blasted against the genome/insert, barcode sequence found and information about the blast results
-  TNSEQ_FILE_noBarcodeFound.txt
+
+  TNSEQ_FILE_noBarcodeFound.txt
     Reads for which the compliant barcode sequences were not found.
 
 --
@@ -206,13 +217,17 @@ RBseq_Annotate_Insertions.py Outputs
 
   POOL_poolfile_GChistogram.pdf
     A histogram of GC content around insertion sites versus GC content in the genome.  Included to detect GC bias in insertion rates.
-  POOL_poolfile_insertionDistribution.pdf
+
+  POOL_poolfile_insertionDistribution.pdf
     A graph comparing frequency of insertions in promoters, exons, etc versus percent of the genome those features comprise. Included to detect feature bias in insertion rates.  With many insertional strategies, higher insertion rates are common in more open regions such as promoters. In some species or with some methods this bias may be extreme enough as to make generation of a large number of insertions in coding regions much more difficult.
-  POOL_poolfile_insertionDistribution.txt
+
+  POOL_poolfile_insertionDistribution.txt
     A text file giving raw data for the insertion distribution graph
-  POOL_poolfile_InsertsPerScaffold.pdf
+
+  POOL_poolfile_InsertsPerScaffold.pdf
     Graphs of insertion number versus scaffold length. Useful for detecting bias in insertion rates or problems with genome assembly or insertion mapping.
-  POOL_poolfile_LargestScaffold.pdf
+
+  POOL_poolfile_LargestScaffold.pdf
     Graph of insertion density in a 1000 base-pair rolling window across the largest scaffold, and predicted insertion density if insertions occurred randomly at the same relative rate in promoters, eons, etc as measured in this library.  Useful for understanding how well distributed insertions occur.  Empirically most insertion libraries are not quite random, that is less evenly distributed than a random model would predict, but useful libraries don't have any large scale biases in insertion rates or particularly dominant insertion hot-spots.
 
 --
@@ -220,42 +235,42 @@ RBseq_Count_Barcodes.py Inputs
 python RBseq_Count_Barcodes.py -m metadatafile [-l logfile --matchBefore 6 --matchAfter 6 --qual 10]
 
   -m/--metafile METAFILE
-    Metadata file for BarSeq runs. Contains the following columns:
+    Metadata file for BarSeq runs. Contains the following twelve columns:
 
-      FileIndex
+      Column 1: FileIndex
       An unique integer for each fastq file to be processed. Used to store intermediate files listing counts for all complaint barcodes found in a given fastq file. Note these are counts for all possible barcodes seen in the sequence, not only those found in the mapped insertion pool reference file.
 
-      Fastq
+      Column 2: Fastq
       Full or relative path to barseq fastq files.
 
-      SampleName
+      Column 3: SampleName
       Short unique name for each physical sample.  One physical sample can have multiple fastq files with their own parameters and dual indexes. All counts across the different fastq files will be aggregated for fitness analysis.  So biological replicates should have different sample names such as treatment_a, treatment_b, treatment_c, control_a, etc.  Whereas technical replicates should have the same sample names.
 
-      UsePrecounted
+      Column 4: UsePrecounted
       TRUE or FALSE.  If TRUE then computed barcode counts from a previous run will be loaded from the output directory.  Useful when re-running analysis on an updated pool mapping or annotation.
 
-      Poolfile
+      Column 5: Poolfile
       Full or relative path to annotated poolfile from RBseq_Annotate_Insertions.py
 
-      OutputDir
+      Column 6: OutputDir
       Full or relative path to output directory
 
-      minRandom
+      Column 7: minRandom
       The minimum number of expected random bases in the barseq reads.  Often barseq primers contain a number of leading random bases to assist in clustering on the illumina sequencer
 
-      maxRandom
+      Column 8: maxRandom
       The maximum number of expected random bases.  In some implementations barseq primers are mixtures with different lengths of leading random bases.  In these cases minRandom and maxRandom should cover the expected range of leading random bases, otherwise maxRandom should be equal to minRandom.
 
-      DualIndex
+      Column 9: DualIndex
       In some applications BarSeq primers will contain a second index sequence to guard against 'index hopping' on the illumine sequencer.  In cases for which the dual indexes have not be de-multiplexed by the sequencer, this field can be used to specify the expected dual index sequence.  This is assumed to appear in the BarSeq read after the leading random bases and before the sequence specified in 'BeforeBarcode'
       
-      BeforeBarcode
+      Column 10: BeforeBarcode
       The constant sequence before the barcode sequence.  Not all of this sequence need be matched to identify the barcode, on the range specified with the -b flag.
 
-      BarcodeLengths
+      Column 11: BarcodeLengths
       The expected length of the barcode.  Can be a single number e.g. 20, or a comma-separated list with no spaces of allowed lengths, e.g. 20,19,21 This list should be in order of expected abundance for fastest processing.
 
-      AfterBarcode
+      Column 12: AfterBarcode
       The constant sequence after the barcode sequence.  Not all of this sequence need be matched to identify the barcode, on the range specified with the -a flag.
 
 
@@ -278,13 +293,15 @@ RBseq_Count_Barcodes.py Outputs
   
   RBseq_Count_Barcodes.py will summarize the number of barcodes seen for each fastqfile, and use the most abundant barcode to estimate overall error rate (the percent of reads with sequence errors in the barcode).  It reports the number barcodes seen once, twice or three times or more in the fastq file, as well as an an extremely approximate guess at to the real diversity of barcodes present in the physical sample using the formula postulated by (Chao 1987): N seen once squared divided by two times N seen twice.  The Chao estimate can be useful when read depth is limiting and the vast majority of one or two count barcodes are real.  At higher read depths the one and two count barcodes are more inflated with sequencing errors and the number of barcodes with three or more counts is probably a better indicator of the actual population size.
 
-  poolCount.txt
+RBseq_Count_Barcodes.py script generates 3 items:
+
+  item 1: poolCount.txt
     Tab-delimited file with uniquely mapped barcodes in the insertion pool, some information about their location and genomic context, and the number of times each was seen in each sample.  Note that for a given biological sample multiple different fastq files can be loaded into this script representing different technical replicates, repeated sequence runs, etc, but in the final output, counts for each sample (indicated by the SampleName field in the metafile) will be aggregated across all input fastqs. 
 
-  countsFiles
+  item 2: countsFiles
     A directory of files with raw barcode counts seen in each fastq file.  These include barcodes not in the mapped mutant pool. These files can be used to repeat counts with an updated poolfile without the time consuming step of finding and counting barcodes in all reads.
 
-  fastqSummaryStats.txt
+  item 3: fastqSummaryStats.txt
     A tab-delimited file summarizing some statistics on barcodes seen in each sequence file.  These are the same stats reported on the command line (total reads, reads with barcodes, etc).  Note that for any files with UsePrecounted = TRUE in the metafile some of these statistics won't be reported as any information on reads without complaint barcodes are not saved in the intermediate .counts files.
 
 --
@@ -387,7 +404,8 @@ RBseq_Calculate_Fitness.py Outputs
 
   pVals.txt
   P-values from T-like test statistics if treated as true T-statistics, after multiple hypothesis correction with the Benjamini-Hochberg procedure.
-  pVals_Wilcoxon.txt
+
+  pVals_Wilcoxon.txt
   P-values from a Wilcoxon Signed Rank Test on normalized BarSeq counts in each condition versus reference samples, after multiple hypothesis correction with the Benjamini-Hochberg procedure.  The signed rank test is less sensitive than T-test approach, but assumes nothing about the distribution of the data, whereas the Pvalues from the Tstats are only valid when the Tstats approximate a normal distribution for truly random data (see QQplots below). Thus the signed rank test P-values should be considered conservative but more robust.
 
   qualityStats.txt
@@ -427,7 +445,8 @@ RBseq_Calculate_Fitness.py Outputs
 
     maxFit
       Maximum fitness score observed in the experiment
-    specificPhenotypes.txt
+  
+  specificPhenotypes.txt
     A table of genes and conditions for which magnitude of fitness scores was greater than the 95 percentile across all experiments + 0.5.  That is is a table of uniquely strong fitness scores.
 
   strainFit.txt
@@ -435,7 +454,8 @@ RBseq_Calculate_Fitness.py Outputs
 
   strainFitUsed.txt
     A table of fitness scores for only the insertions used in fitness analysis
-  QCplots
+
+  QCplots
 
     A folder with the following plots for each condition
 
@@ -451,7 +471,8 @@ RBseq_Calculate_Fitness.py Outputs
     CONDITION_qq.pdf
       A quantile-quantile plot of Tstats versus a standard normal distribution.  If the Tstats followed a perfect standard normal, they would fall along the diagonal line on the plot.  Tstats from theoretically identical populations (e.g. a collection of comparisons between 'Time 0' replicates, or Tstats from the mutant pool grown in the same condition as the library was constructed) should hold closely to this line.  In an experiment in which the Tstats are useful, the Tstats should follow this diagonal line near the origin, then diverge at the edges of the distribution as genes with true fitness effects have more extreme T-stats than would be expected from a normal distribution. If Tstats do not follow this expected pattern, use of the more conservative P-values from the Wilcoxon Signed Rank Test is recommended over using P-values from the Tstats. 
    
-
+
+
 --LICENSE--
 Copyright (C) 2019 Samuel Coradetti and the United States Department of Energy. All rights reserved.
 
