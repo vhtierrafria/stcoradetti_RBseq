@@ -250,10 +250,10 @@ python RBseq_Count_Barcodes.py -m metadatafile [-l logfile --matchBefore 6 --mat
       TRUE or FALSE.  If TRUE then computed barcode counts from a previous run will be loaded from the output directory.  Useful when re-running analysis on an updated pool mapping or annotation.
 
       Column 5: Poolfile
-      Full or relative path to annotated poolfile from RBseq_Annotate_Insertions.py
+      Full or relative path to poolfile_annotated output item from RBseq_Annotate_Insertions.py
 
       Column 6: OutputDir
-      Full or relative path to output directory
+      Full or relative path to output directory. Manuel Villalobos made a subdirectory per fastq file/sample (see /Trichoderma_RB-TDNAseq/metadata/meta_counts_carbono1.txt)
 
       Column 7: minRandom
       The minimum number of expected random bases in the barseq reads.  Often barseq primers contain a number of leading random bases to assist in clustering on the illumina sequencer
